@@ -1,0 +1,5 @@
+# target folder with all the builds...
+/target
+
+# cargo.lock file which will be automatically generated on local machine
+Cargo.lock
