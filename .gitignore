@@ -3,3 +3,6 @@
 
 # cargo.lock file which will be automatically generated on local machine
 Cargo.lock
+
+# vs code settings
+/.vscode
