@@ -70,6 +70,26 @@ impl KeyboardReport {
             0xC0, //        End Collection
         ];
     }
+
+    pub fn get_sendable_report(&self) -> [u8; 14] {
+        let report = [
+            self.modifier,
+            self.reserved,
+            self.keycodes[0],
+            self.keycodes[1],
+            self.keycodes[2],
+            self.keycodes[3],
+            self.keycodes[4],
+            self.keycodes[5],
+            self.keycodes[6],
+            self.keycodes[7],
+            self.keycodes[8],
+            self.keycodes[9],
+            self.keycodes[10],
+            self.keycodes[11],
+        ];
+        return report;
+    }
 }
 
 impl AsInputReport for KeyboardReport {}
