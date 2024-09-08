@@ -1,22 +1,15 @@
-use embassy_sync::blocking_mutex::{raw::CriticalSectionRawMutex, CriticalSectionMutex};
-
 use crate::hid_helper::keyboard_report::KeyboardReport;
-
-static mut KEYBOARD_READOUT_BUFFER: embassy_sync::blocking_mutex::Mutex<
-    CriticalSectionRawMutex,
-    KeyboardRingBuffer,
-> = CriticalSectionMutex::new(KeyboardRingBuffer::new());
 
 const BUFFER_SIZE: usize = 40;
 
-struct KeyboardRingBuffer {
+pub struct KeyboardRingBuffer {
     pub the_buffer: [KeyboardReport; BUFFER_SIZE],
     pub entry_pos: usize,
     pub exit_pos: usize,
 }
 
 impl KeyboardRingBuffer {
-    const fn new() -> KeyboardRingBuffer {
+    pub fn new() -> KeyboardRingBuffer {
         return KeyboardRingBuffer {
             the_buffer: [KeyboardReport::new(); BUFFER_SIZE],
             entry_pos: 0,
@@ -24,23 +17,7 @@ impl KeyboardRingBuffer {
         };
     }
 
-    pub fn enqueue(report: KeyboardReport) {
-        unsafe {
-            let keyboard_buffer = KEYBOARD_READOUT_BUFFER.get_mut();
-            keyboard_buffer.put_report(report);
-        };
-    }
-
-    pub fn dequeue() -> Option<KeyboardReport> {
-        let report: Option<KeyboardReport>;
-        unsafe {
-            let keyboard_buffer = KEYBOARD_READOUT_BUFFER.get_mut();
-            report = keyboard_buffer.get_report();
-        };
-        return report;
-    }
-
-    fn get_report(&mut self) -> Option<KeyboardReport> {
+    pub fn get_report(&mut self) -> Option<KeyboardReport> {
         if self.entry_pos == self.exit_pos {
             return None;
         }
@@ -50,7 +27,7 @@ impl KeyboardRingBuffer {
         return Some(report);
     }
 
-    fn put_report(&mut self, report: KeyboardReport) {
+    pub fn put_report(&mut self, report: KeyboardReport) {
         if self.entry_pos == self.exit_pos {
             return;
         }

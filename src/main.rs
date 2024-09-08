@@ -2,50 +2,49 @@
 #![no_main]
 
 use core::sync::atomic::{AtomicBool, Ordering};
-
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
 use embassy_rp::bind_interrupts;
-use embassy_rp::gpio::{Input, Pull};
+use embassy_rp::gpio::{Input, Output};
 use embassy_rp::peripherals::USB;
-use embassy_rp::usb::{Driver, InterruptHandler};
+use embassy_rp::usb::Driver;
 use embassy_usb::class::hid::{HidReaderWriter, ReportId, RequestHandler, State};
 use embassy_usb::control::OutResponse;
 use embassy_usb::{Builder, Config, Handler};
+use io_manager::manager::KeyboardIoManager;
+use report_buffer::buffer::KeyboardRingBuffer;
 use usbd_hid::descriptor::{KeyboardReport, SerializedDescriptor};
 use {defmt_rtt as _, panic_probe as _};
 
+mod hid_helper;
+mod io_manager;
+mod report_buffer;
+
 bind_interrupts!(struct Irqs {
-    USBCTRL_IRQ => InterruptHandler<USB>;
+    USBCTRL_IRQ => embassy_rp::usb::InterruptHandler<USB>;
+    I2C1_IRQ => embassy_rp::i2c::InterruptHandler<embassy_rp::peripherals::I2C1>;
 });
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
-    // Create the driver, from the HAL.
-    let driver = Driver::new(p.USB, Irqs);
 
-    // Create embassy-usb Config
+    // USB device creation and initialization.
+    let driver = Driver::new(p.USB, Irqs);
     let mut config = Config::new(0xc0de, 0xcafe);
     config.manufacturer = Some("Parth Somani");
     config.product = Some("Parth's Keyboard");
     config.serial_number = Some("02122002");
     config.max_power = 150;
     config.max_packet_size_0 = 64;
-
-    // Create embassy-usb DeviceBuilder using the driver and config.
-    // It needs some buffers for building the descriptors.
     let mut config_descriptor = [0; 256];
     let mut bos_descriptor = [0; 256];
-    // You can also add a Microsoft OS descriptor.
     let mut msos_descriptor = [0; 256];
     let mut control_buf = [0; 64];
     let mut request_handler = MyRequestHandler {};
     let mut device_handler = MyDeviceHandler::new();
-
     let mut state = State::new();
-
     let mut builder = Builder::new(
         driver,
         config,
@@ -54,10 +53,7 @@ async fn main(_spawner: Spawner) {
         &mut msos_descriptor,
         &mut control_buf,
     );
-
     builder.handler(&mut device_handler);
-
-    // Create classes on the builder.
     let config = embassy_usb::class::hid::Config {
         report_descriptor: KeyboardReport::desc(),
         request_handler: None,
@@ -65,51 +61,74 @@ async fn main(_spawner: Spawner) {
         max_packet_size: 64,
     };
     let hid = HidReaderWriter::<_, 1, 8>::new(&mut builder, &mut state, config);
-
-    // Build the builder.
     let mut usb = builder.build();
-
-    // Run the USB device.
     let usb_fut = usb.run();
-
-    // Set up the signal pin that will be used to trigger the keyboard.
-    let mut signal_pin = Input::new(p.PIN_16, Pull::None);
-
-    // Enable the schmitt trigger to slightly debounce.
-    signal_pin.set_schmitt(true);
-
     let (reader, mut writer) = hid.split();
 
-    // Do stuff with the class!
+    // Pico I/O pin initialization
+
+    // the bluetooth/usb switch button
+    let bluetooth_trigger_key = Input::new(p.PIN_0, embassy_rp::gpio::Pull::Down);
+
+    // caps lock led and display and mode button.
+    let caps_led = Output::new(p.PIN_1, embassy_rp::gpio::Level::Low);
+
+    // initiating the rows
+    let row_1 = Output::new(p.PIN_2, embassy_rp::gpio::Level::Low);
+    let row_2 = Output::new(p.PIN_3, embassy_rp::gpio::Level::Low);
+    let row_3 = Output::new(p.PIN_4, embassy_rp::gpio::Level::Low);
+
+    // initiating the columns
+    let column_1 = Input::new(p.PIN_5, embassy_rp::gpio::Pull::Down);
+    let column_2 = Input::new(p.PIN_6, embassy_rp::gpio::Pull::Down);
+    let column_3 = Input::new(p.PIN_7, embassy_rp::gpio::Pull::Down);
+    let column_4 = Input::new(p.PIN_8, embassy_rp::gpio::Pull::Down);
+    let column_5 = Input::new(p.PIN_9, embassy_rp::gpio::Pull::Down);
+    let column_6 = Input::new(p.PIN_10, embassy_rp::gpio::Pull::Down);
+
+    // left thumb cluster
+    let lt_1 = Input::new(p.PIN_11, embassy_rp::gpio::Pull::Down);
+    let lt_2 = Input::new(p.PIN_12, embassy_rp::gpio::Pull::Down);
+    let lt_3 = Input::new(p.PIN_13, embassy_rp::gpio::Pull::Down);
+
+    // display pins
+    let display_config = embassy_rp::i2c::Config::default();
+    let display_bus =
+        embassy_rp::i2c::I2c::new_async(p.I2C1, p.PIN_15, p.PIN_14, Irqs, display_config);
+
+    // mode key
+    let mode = Input::new(p.PIN_16, embassy_rp::gpio::Pull::Down);
+
+    // the gpio containing struct
+    let mut keyboard_io = KeyboardIoManager::new(
+        column_1,
+        column_2,
+        column_3,
+        column_4,
+        column_5,
+        column_6,
+        row_1,
+        row_2,
+        row_3,
+        lt_1,
+        lt_2,
+        lt_3,
+        caps_led,
+        bluetooth_trigger_key,
+        mode,
+        display_bus,
+    );
+
+    // initializing the ring buffer to store key strokes
+    let report_buffer = KeyboardRingBuffer::new();
+
     let in_fut = async {
         loop {
-            info!("Waiting for HIGH on pin 16");
-            signal_pin.wait_for_high().await;
-            info!("HIGH DETECTED");
-            // Create a report with the A key pressed. (no shift modifier)
-            let report = KeyboardReport {
-                keycodes: [4, 0, 0, 0, 0, 0],
-                leds: 0,
-                modifier: 0,
-                reserved: 0,
-            };
-            // Send the report.
-            match writer.write_serialize(&report).await {
-                Ok(()) => {}
-                Err(e) => warn!("Failed to send report: {:?}", e),
-            };
-            signal_pin.wait_for_low().await;
-            info!("LOW DETECTED");
-            let report = KeyboardReport {
-                keycodes: [0, 0, 0, 0, 0, 0],
-                leds: 0,
-                modifier: 0,
-                reserved: 0,
-            };
-            match writer.write_serialize(&report).await {
-                Ok(()) => {}
-                Err(e) => warn!("Failed to send report: {:?}", e),
-            };
+            // performing a keyboard read
+            let readout = keyboard_io.generate_readout().await;
+
+            // generating a report from the readout and adding a unique report to the buffer
+            
         }
     };
 
@@ -180,7 +199,9 @@ impl Handler for MyDeviceHandler {
     fn configured(&mut self, configured: bool) {
         self.configured.store(configured, Ordering::Relaxed);
         if configured {
-            info!("Device configured, it may now draw up to the configured current limit from Vbus.")
+            info!(
+                "Device configured, it may now draw up to the configured current limit from Vbus."
+            )
         } else {
             info!("Device is no longer configured, the Vbus current limit is 100mA.");
         }
