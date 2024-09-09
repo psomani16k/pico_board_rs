@@ -89,8 +89,8 @@ impl<'a> KeyboardIoManager<'a> {
         };
     }
 
-    pub async fn generate_readout(&mut self) -> KeyPressReadout {
-        KeyPressReadout::new(self).await
+    pub async fn generate_readout(&mut self) -> LeftKeyboardReadOut {
+        LeftKeyboardReadOut::new(self).await
     }
 
     fn set_row_high(&mut self, row: Row) {
@@ -185,14 +185,14 @@ impl<'a> KeyboardIoManager<'a> {
 // |   RESERVED    | - 1
 // +---------------+
 #[derive(Clone, Copy)]
-pub struct KeyPressReadout {
+pub struct LeftKeyboardReadOut {
     data_1: u16,
     data_2: u8,
 }
 
-impl KeyPressReadout {
-    async fn new(io_manager: &mut KeyboardIoManager<'_>) -> KeyPressReadout {
-        let mut readout = KeyPressReadout {
+impl LeftKeyboardReadOut {
+    async fn new(io_manager: &mut KeyboardIoManager<'_>) -> LeftKeyboardReadOut {
+        let mut readout = LeftKeyboardReadOut {
             data_1: 0,
             data_2: 0,
         };
