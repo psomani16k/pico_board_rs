@@ -1,3 +1,4 @@
+#[derive(Clone, Copy)]
 pub enum KeyCodes {
     HidKeyNone = 0x00,
     HidKeyA = 0x04,
