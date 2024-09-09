@@ -20,13 +20,29 @@ impl KeyboardReport {
         };
     }
 
-    pub fn add_keycode(&mut self, key: KeyCodes) -> bool {
+    pub fn is_empty(&self) -> bool {
+        return self.modifier
+            + self.keycodes[0]
+            + self.keycodes[1]
+            + self.keycodes[2]
+            + self.keycodes[3]
+            + self.keycodes[4]
+            + self.keycodes[5]
+            + self.keycodes[6]
+            + self.keycodes[7]
+            + self.keycodes[8]
+            + self.keycodes[9]
+            + self.keycodes[10]
+            + self.keycodes[11]
+            == 0;
+    }
+
+    pub fn add_keycode(&mut self, key: KeyCodes) {
         if self.pos == 12 {
-            return false;
+            return;
         }
         self.keycodes[self.pos] = key as u8;
         self.pos += 1;
-        true
     }
 
     pub fn add_modifier(&mut self, modifier: Modifiers) {
