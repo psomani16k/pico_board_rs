@@ -1,51 +1,44 @@
-use heapless::Vec;
+pub mod keyboard_profile {
+    use crate::{
+        hid_helper::keyboard_report::KeyboardReport, io_manager::manager::LeftKeyboardReadOut,
+        profiles_management::keyprofile_helper::keyboard_profile::KeyAction,
+        report_buffer::buffer::KeyboardRingBuffer,
+    };
 
-use crate::{
-    hid_helper::{keyboard_report::KeyboardReport, keys::KeyCodes},
-    io_manager::manager::LeftKeyboardReadOut,
-    report_buffer::buffer::KeyboardRingBuffer,
-};
+    pub struct KeyboardProfile {
+        previous_report: KeyboardReport,
 
-trait KeyProfile {
-    fn process_report(
-        buffer: &mut KeyboardRingBuffer,
-        left_readout: LeftKeyboardReadOut,
-        // right_readout: RightKeyboardReadOut
-    );
-}
+        c1r1: KeyAction,
+        c2r1: KeyAction,
+        c3_r1: KeyAction,
+        c4_r1: KeyAction,
+        c5_r1: KeyAction,
+        c6_r1: KeyAction,
+        c1_r2: KeyAction,
+        c2_r2: KeyAction,
+        c3_r2: KeyAction,
+        c4_r2: KeyAction,
+        c5_r2: KeyAction,
+        c6_r2: KeyAction,
+        c1_r3: KeyAction,
+        c2_r3: KeyAction,
+        c3_r3: KeyAction,
+        c4_r3: KeyAction,
+        c5_r3: KeyAction,
+        c6_r3: KeyAction,
+        lt_1: KeyAction,
+        lt_2: KeyAction,
+        lt_3: KeyAction,
+        // mode: KeyAction,
+    }
 
-enum KeyAction {
-    HidKey(KeyCodes),
-    HidReport(Vec<KeyboardReport, 30>),
-}
-
-impl KeyAction {
-    pub fn add_to_buffer(
-        &self,
-        buffer: &mut KeyboardRingBuffer,
-        report: &mut KeyboardReport,
-    ) -> bool {
-        match self {
-            KeyAction::HidKey(key) => {
-                report.add_keycode(key.clone());
-                return false;
-            }
-            KeyAction::HidReport(reports) => {
-                for i in reports {
-                    if i.is_empty() {
-                        return true;
-                    }
-                    buffer.put_report(i.clone());
-                }
-                return true;
-            }
+    impl KeyboardProfile {
+        pub fn process_readout(
+            &self,
+            left_readout: LeftKeyboardReadOut,
+            // right_readout: RightKeyboardReadOut,
+            buffer: &mut KeyboardRingBuffer,
+        ) {
         }
     }
-}
-
-pub struct KeyActionSet {
-    base_action: KeyAction,
-    fn_one_action: KeyAction,
-    fn_two_action: KeyAction,
-    fn_one_two_action: KeyAction,
 }

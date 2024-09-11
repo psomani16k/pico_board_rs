@@ -289,120 +289,120 @@ impl LeftKeyboardReadOut {
         return readout;
     }
 
-    pub fn get_high_keys(&self) -> Vec<KeyLocations, 21> {
-        let mut pressed_keys: Vec<KeyLocations, 21> = Vec::new();
+    pub fn get_high_keys(&self) -> Vec<LeftKeyLocations, 21> {
+        let mut pressed_keys: Vec<LeftKeyLocations, 21> = Vec::new();
         let mut self_copy = self.clone();
         if self_copy.data_1 >= 32768 {
             self_copy.data_1 = self_copy.data_1 - 32786;
-            let _ = pressed_keys.push(KeyLocations::C1R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C1R1);
         }
         if self_copy.data_1 >= 16384 {
             self_copy.data_1 = self_copy.data_1 - 16384;
-            let _ = pressed_keys.push(KeyLocations::C2R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C2R1);
         }
         if self_copy.data_1 >= 8192 {
             self_copy.data_1 = self_copy.data_1 - 8192;
-            let _ = pressed_keys.push(KeyLocations::C3R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C3R1);
         }
         if self_copy.data_1 >= 4096 {
             self_copy.data_1 = self_copy.data_1 - 4096;
-            let _ = pressed_keys.push(KeyLocations::C4R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C4R1);
         }
         if self_copy.data_1 >= 2048 {
             self_copy.data_1 = self_copy.data_1 - 2048;
-            let _ = pressed_keys.push(KeyLocations::C5R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C5R1);
         }
         if self_copy.data_1 >= 1024 {
             self_copy.data_1 = self_copy.data_1 - 1024;
-            let _ = pressed_keys.push(KeyLocations::C6R1);
+            let _ = pressed_keys.push(LeftKeyLocations::C6R1);
         }
         if self_copy.data_1 >= 512 {
             self_copy.data_1 = self_copy.data_1 - 512;
-            let _ = pressed_keys.push(KeyLocations::C1R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C1R2);
         }
         if self_copy.data_1 >= 256 {
             self_copy.data_1 = self_copy.data_1 - 256;
-            let _ = pressed_keys.push(KeyLocations::C2R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C2R2);
         }
         if self_copy.data_1 >= 128 {
             self_copy.data_1 = self_copy.data_1 - 128;
-            let _ = pressed_keys.push(KeyLocations::C3R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C3R2);
         }
         if self_copy.data_1 >= 64 {
             self_copy.data_1 = self_copy.data_1 - 64;
-            let _ = pressed_keys.push(KeyLocations::C4R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C4R2);
         }
         if self_copy.data_1 >= 32 {
             self_copy.data_1 = self_copy.data_1 - 32;
-            let _ = pressed_keys.push(KeyLocations::C5R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C5R2);
         }
         if self_copy.data_1 >= 16 {
             self_copy.data_1 = self_copy.data_1 - 16;
-            let _ = pressed_keys.push(KeyLocations::C6R2);
+            let _ = pressed_keys.push(LeftKeyLocations::C6R2);
         }
         if self_copy.data_1 >= 8 {
             self_copy.data_1 = self_copy.data_1 - 8;
-            let _ = pressed_keys.push(KeyLocations::C1R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C1R3);
         }
         if self_copy.data_1 >= 4 {
             self_copy.data_1 = self_copy.data_1 - 4;
-            let _ = pressed_keys.push(KeyLocations::C2R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C2R3);
         }
         if self_copy.data_1 >= 2 {
             self_copy.data_1 = self_copy.data_1 - 2;
-            let _ = pressed_keys.push(KeyLocations::C3R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C3R3);
         }
         if self_copy.data_1 >= 1 {
             self_copy.data_1 = self_copy.data_1 - 1;
-            let _ = pressed_keys.push(KeyLocations::C4R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C4R3);
         }
         if self_copy.data_2 >= 128 {
             self_copy.data_2 = self_copy.data_2 - 128;
-            let _ = pressed_keys.push(KeyLocations::C5R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C5R3);
         }
         if self_copy.data_2 >= 64 {
             self_copy.data_2 = self_copy.data_2 - 64;
-            let _ = pressed_keys.push(KeyLocations::C6R3);
+            let _ = pressed_keys.push(LeftKeyLocations::C6R3);
         }
         if self_copy.data_2 >= 32 {
             self_copy.data_2 = self_copy.data_2 - 32;
-            let _ = pressed_keys.push(KeyLocations::LT1);
+            let _ = pressed_keys.push(LeftKeyLocations::LT1);
         }
         if self_copy.data_2 >= 16 {
             self_copy.data_2 = self_copy.data_2 - 16;
-            let _ = pressed_keys.push(KeyLocations::LT2);
+            let _ = pressed_keys.push(LeftKeyLocations::LT2);
         }
         if self_copy.data_2 >= 8 {
             self_copy.data_2 = self_copy.data_2 - 8;
-            let _ = pressed_keys.push(KeyLocations::LT3);
+            let _ = pressed_keys.push(LeftKeyLocations::LT3);
         }
         return pressed_keys;
     }
 
-    pub fn is_pressed(&self, location: KeyLocations) -> bool {
+    pub fn is_pressed(&self, location: LeftKeyLocations) -> bool {
         match location {
-            KeyLocations::C1R1 => return (self.data_1 & 32768 as u16) != 0,
-            KeyLocations::C2R1 => return (self.data_1 & 16384 as u16) != 0,
-            KeyLocations::C3R1 => return (self.data_1 & 8192 as u16) != 0,
-            KeyLocations::C4R1 => return (self.data_1 & 4096 as u16) != 0,
-            KeyLocations::C5R1 => return (self.data_1 & 2048 as u16) != 0,
-            KeyLocations::C6R1 => return (self.data_1 & 1024 as u16) != 0,
-            KeyLocations::C1R2 => return (self.data_1 & 512 as u16) != 0,
-            KeyLocations::C2R2 => return (self.data_1 & 256 as u16) != 0,
-            KeyLocations::C3R2 => return (self.data_1 & 128 as u16) != 0,
-            KeyLocations::C4R2 => return (self.data_1 & 64 as u16) != 0,
-            KeyLocations::C5R2 => return (self.data_1 & 32 as u16) != 0,
-            KeyLocations::C6R2 => return (self.data_1 & 16 as u16) != 0,
-            KeyLocations::C1R3 => return (self.data_1 & 8 as u16) != 0,
-            KeyLocations::C2R3 => return (self.data_1 & 4 as u16) != 0,
-            KeyLocations::C3R3 => return (self.data_1 & 2 as u16) != 0,
-            KeyLocations::C4R3 => return (self.data_1 & 1 as u16) != 0,
-            KeyLocations::C5R3 => return (self.data_2 & 128 as u8) != 0,
-            KeyLocations::C6R3 => return (self.data_2 & 64 as u8) != 0,
-            KeyLocations::LT1 => return (self.data_2 & 32 as u8) != 0,
-            KeyLocations::LT2 => return (self.data_2 & 16 as u8) != 0,
-            KeyLocations::LT3 => return (self.data_2 & 8 as u8) != 0,
-            KeyLocations::Mode => return (self.data_2 & 4 as u8) != 0,
+            LeftKeyLocations::C1R1 => return (self.data_1 & 32768 as u16) != 0,
+            LeftKeyLocations::C2R1 => return (self.data_1 & 16384 as u16) != 0,
+            LeftKeyLocations::C3R1 => return (self.data_1 & 8192 as u16) != 0,
+            LeftKeyLocations::C4R1 => return (self.data_1 & 4096 as u16) != 0,
+            LeftKeyLocations::C5R1 => return (self.data_1 & 2048 as u16) != 0,
+            LeftKeyLocations::C6R1 => return (self.data_1 & 1024 as u16) != 0,
+            LeftKeyLocations::C1R2 => return (self.data_1 & 512 as u16) != 0,
+            LeftKeyLocations::C2R2 => return (self.data_1 & 256 as u16) != 0,
+            LeftKeyLocations::C3R2 => return (self.data_1 & 128 as u16) != 0,
+            LeftKeyLocations::C4R2 => return (self.data_1 & 64 as u16) != 0,
+            LeftKeyLocations::C5R2 => return (self.data_1 & 32 as u16) != 0,
+            LeftKeyLocations::C6R2 => return (self.data_1 & 16 as u16) != 0,
+            LeftKeyLocations::C1R3 => return (self.data_1 & 8 as u16) != 0,
+            LeftKeyLocations::C2R3 => return (self.data_1 & 4 as u16) != 0,
+            LeftKeyLocations::C3R3 => return (self.data_1 & 2 as u16) != 0,
+            LeftKeyLocations::C4R3 => return (self.data_1 & 1 as u16) != 0,
+            LeftKeyLocations::C5R3 => return (self.data_2 & 128 as u8) != 0,
+            LeftKeyLocations::C6R3 => return (self.data_2 & 64 as u8) != 0,
+            LeftKeyLocations::LT1 => return (self.data_2 & 32 as u8) != 0,
+            LeftKeyLocations::LT2 => return (self.data_2 & 16 as u8) != 0,
+            LeftKeyLocations::LT3 => return (self.data_2 & 8 as u8) != 0,
+            LeftKeyLocations::Mode => return (self.data_2 & 4 as u8) != 0,
         }
     }
 }
@@ -412,27 +412,27 @@ enum Row {
     Middle, // Row 2
     Bottom, // Row 1
 }
-enum KeyLocations {
-    C1R1,
-    C2R1,
-    C3R1,
-    C4R1,
-    C5R1,
-    C6R1,
-    C1R2,
-    C2R2,
-    C3R2,
-    C4R2,
-    C5R2,
-    C6R2,
-    C1R3,
-    C2R3,
-    C3R3,
-    C4R3,
-    C5R3,
-    C6R3,
-    LT1,
-    LT2,
-    LT3,
-    Mode,
+enum LeftKeyLocations {
+    C1R1 = 0,
+    C2R1 = 1,
+    C3R1 = 2,
+    C4R1 = 3,
+    C5R1 = 4,
+    C6R1 = 5,
+    C1R2 = 6,
+    C2R2 = 7,
+    C3R2 = 8,
+    C4R2 = 9,
+    C5R2 = 10,
+    C6R2 = 11,
+    C1R3 = 12,
+    C2R3 = 13,
+    C3R3 = 14,
+    C4R3 = 15,
+    C5R3 = 16,
+    C6R3 = 17,
+    LT1 = 18,
+    LT2 = 19,
+    LT3 = 20,
+    Mode = 21,
 }

@@ -121,14 +121,14 @@ async fn main(_spawner: Spawner) {
     );
 
     // initializing the ring buffer to store key strokes
-    let report_buffer = Mute(KeyboardRingBuffer::new());
+    let report_buffer = KeyboardRingBuffer::new();
 
     let in_fut = async {
         loop {
             // performing a keyboard read
             let left_readout = keyboard_io.generate_readout().await;
             // get the readout from the right side of the keyboard
-            // ...
+            // 
             // generating a report from the readout and adding a unique report to the buffer
         }
     };
