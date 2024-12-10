@@ -1,3 +1,2 @@
-pub mod keyprofile;
-pub mod keyprofile_helper;
+pub mod keyboard_profile;
 pub mod profiles;
