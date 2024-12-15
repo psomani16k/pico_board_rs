@@ -3,6 +3,14 @@ name = "keyboard-left"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "keyboard-left"
+path = "src/main.rs"
+test = false
+doctest = false
+bench = false
+
+
 [dependencies]
 embassy-embedded-hal = { version = "0.2.0", path = "../embassy/embassy-embedded-hal", features = [
     "defmt",
