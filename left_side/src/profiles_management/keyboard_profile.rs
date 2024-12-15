@@ -151,32 +151,6 @@ pub mod keyboard_profile {
             }
             buffer.put_report(report);
         }
-
-        fn get_action_set(&self, key: LeftKeyLocation) -> &KeyActionSet {
-            match key {
-                LeftKeyLocation::C1R1 => &self.c1_r1,
-                LeftKeyLocation::C2R1 => &self.c2_r1,
-                LeftKeyLocation::C3R1 => &self.c3_r1,
-                LeftKeyLocation::C4R1 => &self.c4_r1,
-                LeftKeyLocation::C5R1 => &self.c5_r1,
-                LeftKeyLocation::C6R1 => &self.c6_r1,
-                LeftKeyLocation::C1R2 => &self.c1_r2,
-                LeftKeyLocation::C2R2 => &self.c2_r2,
-                LeftKeyLocation::C3R2 => &self.c3_r2,
-                LeftKeyLocation::C4R2 => &self.c4_r2,
-                LeftKeyLocation::C5R2 => &self.c5_r2,
-                LeftKeyLocation::C6R2 => &self.c6_r2,
-                LeftKeyLocation::C1R3 => &self.c1_r3,
-                LeftKeyLocation::C2R3 => &self.c2_r3,
-                LeftKeyLocation::C3R3 => &self.c3_r3,
-                LeftKeyLocation::C4R3 => &self.c4_r3,
-                LeftKeyLocation::C5R3 => &self.c5_r3,
-                LeftKeyLocation::C6R3 => &self.c6_r3,
-                LeftKeyLocation::LT1 => &self.lt_1,
-                LeftKeyLocation::LT2 => &self.lt_2,
-                LeftKeyLocation::LT3 => &self.lt_3,
-            }
-        }
     }
 
     pub struct KeyActionSet {

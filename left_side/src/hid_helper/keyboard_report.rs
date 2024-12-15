@@ -39,10 +39,6 @@ impl KeyboardReportHelper {
         return self.pos == 0;
     }
 
-    pub fn is_full(&self) -> bool {
-        return self.pos == 6;
-    }
-
     pub fn add_keycode(&mut self, key: KeyboardUsage) {
         match key {
             KeyboardUsage::KeyboardLeftShift => self.add_modifier(Modifiers::LeftShift),

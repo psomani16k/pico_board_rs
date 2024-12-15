@@ -1,5 +1,3 @@
-use usbd_hid::descriptor::KeyboardReport;
-
 use crate::hid_helper::keyboard_report::KeyboardReportHelper;
 
 const BUFFER_SIZE: u8 = 100;
@@ -29,14 +27,6 @@ impl KeyboardRingBuffer {
         self.exit_pos += 1;
         self.count -= 1;
         self.exit_pos = self.exit_pos % BUFFER_SIZE as usize;
-        return Some(report);
-    }
-
-    fn peek(&self) -> Option<KeyboardReportHelper> {
-        if self.entry_pos == self.exit_pos {
-            return None;
-        }
-        let report = self.the_buffer[self.exit_pos];
         return Some(report);
     }
 
