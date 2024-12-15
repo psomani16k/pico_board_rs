@@ -1,14 +1,15 @@
 pub mod keyboard_profile {
     use crate::{
         hid_helper::keyboard_report::KeyboardReportHelper,
+        io_management::left_half_manager::{LeftKeyLocation, LeftReadout},
         report_buffer::buffer::KeyboardRingBuffer,
     };
     use heapless::Vec;
     use usbd_hid::descriptor::KeyboardUsage;
 
     pub struct KeyboardProfile {
-        pub layer_key_1: LeftKeyLocations,
-        pub layer_key_2: LeftKeyLocations,
+        pub layer_key_1: LeftKeyLocation,
+        pub layer_key_2: LeftKeyLocation,
         pub c1_r1: KeyActionSet,
         pub c2_r1: KeyActionSet,
         pub c3_r1: KeyActionSet,
@@ -35,7 +36,7 @@ pub mod keyboard_profile {
     impl KeyboardProfile {
         pub fn process_readout(
             &self,
-            location_helper: &LeftKeyLocationHelper,
+            location_helper: &LeftReadout,
             buffer: &mut KeyboardRingBuffer,
         ) {
             let layer_one = location_helper.is_pressed(&self.layer_key_1);
@@ -43,107 +44,107 @@ pub mod keyboard_profile {
             let layer = LayerLevel::new(layer_one, layer_two);
             let mut report = KeyboardReportHelper::new();
 
-            if location_helper.is_pressed(&LeftKeyLocations::C1R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C1R1) {
                 if self.c1_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C1R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C1R2) {
                 if self.c1_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C1R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C1R3) {
                 if self.c1_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C2R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C2R1) {
                 if self.c2_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C2R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C2R2) {
                 if self.c2_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C2R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C2R3) {
                 if self.c2_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C3R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C3R1) {
                 if self.c3_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C3R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C3R2) {
                 if self.c3_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C3R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C3R3) {
                 if self.c3_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C4R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C4R1) {
                 if self.c4_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C4R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C4R2) {
                 if self.c4_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C4R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C4R3) {
                 if self.c4_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C5R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C5R1) {
                 if self.c5_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C5R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C5R2) {
                 if self.c5_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C5R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C5R3) {
                 if self.c5_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C6R1) {
+            if location_helper.is_pressed(&LeftKeyLocation::C6R1) {
                 if self.c6_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C6R2) {
+            if location_helper.is_pressed(&LeftKeyLocation::C6R2) {
                 if self.c6_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::C6R3) {
+            if location_helper.is_pressed(&LeftKeyLocation::C6R3) {
                 if self.c6_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::LT1) {
+            if location_helper.is_pressed(&LeftKeyLocation::LT1) {
                 if self.lt_1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::LT2) {
+            if location_helper.is_pressed(&LeftKeyLocation::LT2) {
                 if self.lt_2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocations::LT3) {
+            if location_helper.is_pressed(&LeftKeyLocation::LT3) {
                 if self.lt_3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
@@ -151,55 +152,31 @@ pub mod keyboard_profile {
             buffer.put_report(report);
         }
 
-        fn get_action_set(&self, key: LeftKeyLocations) -> &KeyActionSet {
+        fn get_action_set(&self, key: LeftKeyLocation) -> &KeyActionSet {
             match key {
-                LeftKeyLocations::C1R1 => &self.c1_r1,
-                LeftKeyLocations::C2R1 => &self.c2_r1,
-                LeftKeyLocations::C3R1 => &self.c3_r1,
-                LeftKeyLocations::C4R1 => &self.c4_r1,
-                LeftKeyLocations::C5R1 => &self.c5_r1,
-                LeftKeyLocations::C6R1 => &self.c6_r1,
-                LeftKeyLocations::C1R2 => &self.c1_r2,
-                LeftKeyLocations::C2R2 => &self.c2_r2,
-                LeftKeyLocations::C3R2 => &self.c3_r2,
-                LeftKeyLocations::C4R2 => &self.c4_r2,
-                LeftKeyLocations::C5R2 => &self.c5_r2,
-                LeftKeyLocations::C6R2 => &self.c6_r2,
-                LeftKeyLocations::C1R3 => &self.c1_r3,
-                LeftKeyLocations::C2R3 => &self.c2_r3,
-                LeftKeyLocations::C3R3 => &self.c3_r3,
-                LeftKeyLocations::C4R3 => &self.c4_r3,
-                LeftKeyLocations::C5R3 => &self.c5_r3,
-                LeftKeyLocations::C6R3 => &self.c6_r3,
-                LeftKeyLocations::LT1 => &self.lt_1,
-                LeftKeyLocations::LT2 => &self.lt_2,
-                LeftKeyLocations::LT3 => &self.lt_3,
+                LeftKeyLocation::C1R1 => &self.c1_r1,
+                LeftKeyLocation::C2R1 => &self.c2_r1,
+                LeftKeyLocation::C3R1 => &self.c3_r1,
+                LeftKeyLocation::C4R1 => &self.c4_r1,
+                LeftKeyLocation::C5R1 => &self.c5_r1,
+                LeftKeyLocation::C6R1 => &self.c6_r1,
+                LeftKeyLocation::C1R2 => &self.c1_r2,
+                LeftKeyLocation::C2R2 => &self.c2_r2,
+                LeftKeyLocation::C3R2 => &self.c3_r2,
+                LeftKeyLocation::C4R2 => &self.c4_r2,
+                LeftKeyLocation::C5R2 => &self.c5_r2,
+                LeftKeyLocation::C6R2 => &self.c6_r2,
+                LeftKeyLocation::C1R3 => &self.c1_r3,
+                LeftKeyLocation::C2R3 => &self.c2_r3,
+                LeftKeyLocation::C3R3 => &self.c3_r3,
+                LeftKeyLocation::C4R3 => &self.c4_r3,
+                LeftKeyLocation::C5R3 => &self.c5_r3,
+                LeftKeyLocation::C6R3 => &self.c6_r3,
+                LeftKeyLocation::LT1 => &self.lt_1,
+                LeftKeyLocation::LT2 => &self.lt_2,
+                LeftKeyLocation::LT3 => &self.lt_3,
             }
         }
-    }
-
-    pub(crate) enum LeftKeyLocations {
-        C1R1,
-        C2R1,
-        C3R1,
-        C4R1,
-        C5R1,
-        C6R1,
-        C1R2,
-        C2R2,
-        C3R2,
-        C4R2,
-        C5R2,
-        C6R2,
-        C1R3,
-        C2R3,
-        C3R3,
-        C4R3,
-        C5R3,
-        C6R3,
-        LT1,
-        LT2,
-        LT3,
     }
 
     pub struct KeyActionSet {
@@ -281,41 +258,6 @@ pub mod keyboard_profile {
                     }
                     return true;
                 }
-            }
-        }
-    }
-
-    pub struct LeftKeyLocationHelper {
-        pub row_1: u8,
-        pub row_2: u8,
-        pub row_3: u8,
-        pub thumb_cluster: u8,
-    }
-
-    impl LeftKeyLocationHelper {
-        pub fn is_pressed(&self, location: &LeftKeyLocations) -> bool {
-            match location {
-                LeftKeyLocations::C1R1 => self.row_1 & 0b00000001 != 0,
-                LeftKeyLocations::C2R1 => self.row_1 & 0b00000010 != 0,
-                LeftKeyLocations::C3R1 => self.row_1 & 0b00000100 != 0,
-                LeftKeyLocations::C4R1 => self.row_1 & 0b00001000 != 0,
-                LeftKeyLocations::C5R1 => self.row_1 & 0b00010000 != 0,
-                LeftKeyLocations::C6R1 => self.row_1 & 0b00100000 != 0,
-                LeftKeyLocations::C1R2 => self.row_2 & 0b00000001 != 0,
-                LeftKeyLocations::C2R2 => self.row_2 & 0b00000010 != 0,
-                LeftKeyLocations::C3R2 => self.row_2 & 0b00000100 != 0,
-                LeftKeyLocations::C4R2 => self.row_2 & 0b00001000 != 0,
-                LeftKeyLocations::C5R2 => self.row_2 & 0b00010000 != 0,
-                LeftKeyLocations::C6R2 => self.row_2 & 0b00100000 != 0,
-                LeftKeyLocations::C1R3 => self.row_3 & 0b00000001 != 0,
-                LeftKeyLocations::C2R3 => self.row_3 & 0b00000010 != 0,
-                LeftKeyLocations::C3R3 => self.row_3 & 0b00000100 != 0,
-                LeftKeyLocations::C4R3 => self.row_3 & 0b00001000 != 0,
-                LeftKeyLocations::C5R3 => self.row_3 & 0b00010000 != 0,
-                LeftKeyLocations::C6R3 => self.row_3 & 0b00100000 != 0,
-                LeftKeyLocations::LT1 => self.thumb_cluster & 0b00000001 != 0,
-                LeftKeyLocations::LT2 => self.thumb_cluster & 0b00000010 != 0,
-                LeftKeyLocations::LT3 => self.thumb_cluster & 0b00000100 != 0,
             }
         }
     }

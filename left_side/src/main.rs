@@ -2,6 +2,7 @@
 #![no_main]
 
 mod hid_helper;
+mod io_management;
 mod profiles_management;
 mod report_buffer;
 
@@ -10,15 +11,15 @@ use defmt::*;
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
 use embassy_rp::bind_interrupts;
-use embassy_rp::gpio::{Input, Output, Pull};
 use embassy_rp::peripherals::USB;
 use embassy_rp::usb::{Driver, InterruptHandler};
 use embassy_time::Timer;
 use embassy_usb::class::hid::{HidReaderWriter, ReportId, RequestHandler, State};
 use embassy_usb::control::OutResponse;
 use embassy_usb::{Builder, Config, Handler};
+use fixed::types::extra::{U8, U80};
 use hid_helper::keyboard_report::KeyboardReportHelper;
-use profiles_management::keyboard_profile::keyboard_profile::LeftKeyLocationHelper;
+use io_management::left_half_manager::{LeftIoManager, LeftReadout};
 use profiles_management::profiles::profile_1::profile_1::get_profile;
 use report_buffer::buffer::KeyboardRingBuffer;
 use usbd_hid::descriptor::{KeyboardReport, KeyboardUsage, SerializedDescriptor};
@@ -92,113 +93,40 @@ async fn main(_spawner: Spawner) {
     // ------Setting up IO---------------------------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------------------------------
     // rows
-    let mut row_1 = Output::new(p.PIN_0, embassy_rp::gpio::Level::High);
-    let mut row_2 = Output::new(p.PIN_1, embassy_rp::gpio::Level::High);
-    let mut row_3 = Output::new(p.PIN_2, embassy_rp::gpio::Level::High);
-
-    // initiating the columns
-    let mut column_1 = Input::new(p.PIN_3, embassy_rp::gpio::Pull::Up);
-    column_1.set_schmitt(true);
-    let mut column_2 = Input::new(p.PIN_4, embassy_rp::gpio::Pull::Up);
-    column_2.set_schmitt(true);
-    let mut column_3 = Input::new(p.PIN_5, embassy_rp::gpio::Pull::Up);
-    column_3.set_schmitt(true);
-    let mut column_4 = Input::new(p.PIN_6, embassy_rp::gpio::Pull::Up);
-    column_4.set_schmitt(true);
-    let mut column_5 = Input::new(p.PIN_7, embassy_rp::gpio::Pull::Up);
-    column_5.set_schmitt(true);
-    let mut column_6 = Input::new(p.PIN_8, embassy_rp::gpio::Pull::Up);
-    column_6.set_schmitt(true);
-
-    // left thumb cluster
-    let mut lt_1 = Input::new(p.PIN_11, embassy_rp::gpio::Pull::Up);
-    lt_1.set_schmitt(true);
-    let mut lt_2 = Input::new(p.PIN_12, embassy_rp::gpio::Pull::Up);
-    lt_2.set_schmitt(true);
-    let mut lt_3 = Input::new(p.PIN_13, embassy_rp::gpio::Pull::Up);
-    lt_3.set_schmitt(true);
 
     let mut buffer = KeyboardRingBuffer::new();
+    let mut left_io_manager = LeftIoManager::new(
+        p.PIN_0, p.PIN_1, p.PIN_2, p.PIN_8, p.PIN_7, p.PIN_6, p.PIN_5, p.PIN_4, p.PIN_3, p.PIN_11,
+        p.PIN_12, p.PIN_13,
+    );
+
+    let profile = get_profile();
 
     let in_fut = async {
-        let mut previous_row_1_readout: u8 = 0;
-        let mut previous_row_2_readout: u8 = 0;
-        let mut previous_row_3_readout: u8 = 0;
-        let mut previous_left_thumb_cluster_readout: u8 = 0;
-        let profile = get_profile();
+        let mut previous_readout = LeftReadout::default();
         loop {
-            // readout
-            let mut row_1_readout: u8 = 0;
-            row_1.set_low();
-            Timer::after_micros(100).await;
-            row_1_readout = column_1.is_low() as u8 * 0b00000001 + row_1_readout;
-            row_1_readout = column_2.is_low() as u8 * 0b00000010 + row_1_readout;
-            row_1_readout = column_3.is_low() as u8 * 0b00000100 + row_1_readout;
-            row_1_readout = column_4.is_low() as u8 * 0b00001000 + row_1_readout;
-            row_1_readout = column_5.is_low() as u8 * 0b00010000 + row_1_readout;
-            row_1_readout = column_6.is_low() as u8 * 0b00100000 + row_1_readout;
-            row_1.set_high();
-            Timer::after_micros(100).await;
-
-            let mut row_2_readout: u8 = 0;
-            row_2.set_low();
-            Timer::after_micros(100).await;
-            row_2_readout = column_1.is_low() as u8 * 0b00000001 + row_2_readout;
-            row_2_readout = column_2.is_low() as u8 * 0b00000010 + row_2_readout;
-            row_2_readout = column_3.is_low() as u8 * 0b00000100 + row_2_readout;
-            row_2_readout = column_4.is_low() as u8 * 0b00001000 + row_2_readout;
-            row_2_readout = column_5.is_low() as u8 * 0b00010000 + row_2_readout;
-            row_2_readout = column_6.is_low() as u8 * 0b00100000 + row_2_readout;
-            row_2.set_high();
-            Timer::after_micros(100).await;
-
-            let mut row_3_readout: u8 = 0;
-            row_3.set_low();
-            Timer::after_micros(100).await;
-            row_3_readout = column_1.is_low() as u8 * 0b00000001 + row_3_readout;
-            row_3_readout = column_2.is_low() as u8 * 0b00000010 + row_3_readout;
-            row_3_readout = column_3.is_low() as u8 * 0b00000100 + row_3_readout;
-            row_3_readout = column_4.is_low() as u8 * 0b00001000 + row_3_readout;
-            row_3_readout = column_5.is_low() as u8 * 0b00010000 + row_3_readout;
-            row_3_readout = column_6.is_low() as u8 * 0b00100000 + row_3_readout;
-            row_3.set_high();
-            Timer::after_micros(100).await;
-
-            let mut left_thumb_cluster_readout: u8 = 0;
-            left_thumb_cluster_readout =
-                lt_1.is_low() as u8 * 0b00000001 + left_thumb_cluster_readout;
-            left_thumb_cluster_readout =
-                lt_2.is_low() as u8 * 0b00000010 + left_thumb_cluster_readout;
-            left_thumb_cluster_readout =
-                lt_3.is_low() as u8 * 0b00000100 + left_thumb_cluster_readout;
-
+            let readout = left_io_manager.produce_readout().await;
             // eliminating duplicate readouts
-            if row_1_readout == previous_row_1_readout
-                && row_2_readout == previous_row_2_readout
-                && row_3_readout == previous_row_3_readout
-                && left_thumb_cluster_readout == previous_left_thumb_cluster_readout
-            {
-            } else {
-                previous_row_1_readout = row_1_readout;
-                previous_row_2_readout = row_2_readout;
-                previous_row_3_readout = row_3_readout;
-                previous_left_thumb_cluster_readout = left_thumb_cluster_readout;
+            if readout != previous_readout {
                 // processing the readout
-                let location_helper = LeftKeyLocationHelper {
-                    row_1: row_1_readout,
-                    row_2: row_2_readout,
-                    row_3: row_3_readout,
-                    thumb_cluster: left_thumb_cluster_readout,
-                };
-
-                profile.process_readout(&location_helper, &mut buffer);
+                previous_readout = readout;
+                profile.process_readout(&previous_readout, &mut buffer);
+                // } else {
+                //     buffer.put_report(KeyboardReportHelper::from_values(
+                //         0,
+                //         KeyboardUsage::KeyboardAa as u8,
+                //         0,
+                //         0,
+                //         0,
+                //         0,
+                //         0,
+                //     /*  x/));
             }
-
             match buffer.get_report_helper() {
                 Some(report_helper) => {
                     let report = report_helper.get_report();
                     writer.ready().await;
-                    writer.write_serialize(&report).await;
+                    writer.write_serialize(&report).await.unwrap();
                 }
                 None => {}
             };
