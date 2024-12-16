@@ -131,7 +131,7 @@ impl<'d> LeftIoManager<'d> {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub struct LeftReadout {
     row_1: u8,
     row_2: u8,
