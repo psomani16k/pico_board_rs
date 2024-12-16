@@ -3,7 +3,6 @@ use embassy_rp::{
     Peripheral,
 };
 use embassy_time::Timer;
-use heapless::Vec;
 
 pub struct RightIoKeyManager<'a> {
     row_1: Output<'a>,

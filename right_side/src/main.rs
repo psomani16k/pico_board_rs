@@ -41,8 +41,12 @@ async fn main(spawner: Spawner) {
         if previous_readout != readout {
             previous_readout = readout;
             let bytes = previous_readout.as_ne_bytes();
-            device.write_async(LEFT_KEYBOARD_ADDRESS, bytes).await;
+            // let bytes = [0b10000000, 0b01000000, 0b00100000, 0b00010000];
+            device
+                .write_async(LEFT_KEYBOARD_ADDRESS, bytes)
+                .await
+                .unwrap();
         }
-        Timer::after_millis(2).await;
+        Timer::after_millis(1).await;
     }
 }

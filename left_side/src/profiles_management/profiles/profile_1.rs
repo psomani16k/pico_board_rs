@@ -14,16 +14,16 @@ pub mod profile_1 {
     use crate::{
         io_management::left_half_manager::LeftKeyLocation,
         profiles_management::keyboard_profile::keyboard_profile::{
-            KeyAction, KeyActionSet, KeyboardProfile,
+            KeyAction, KeyActionSet, KeyboardProfile, UniversalKey,
         },
     };
 
     pub fn get_profile() -> KeyboardProfile {
         return KeyboardProfile {
-            layer_key_1: LeftKeyLocation::LT3,
-            layer_key_2: LeftKeyLocation::LT2,
+            layer_key_1: UniversalKey::LeftKey(LeftKeyLocation::LT3),
+            layer_key_2: UniversalKey::LeftKey(LeftKeyLocation::LT2),
             c1_r1: KeyActionSet {
-                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardEe),
                 layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
                 layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
                 layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
@@ -147,6 +147,132 @@ pub mod profile_1 {
                 layer_one_action: KeyAction::DeadKey,
                 layer_two_action: KeyAction::DeadKey,
                 layer_one_and_two_action: KeyAction::DeadKey,
+            },
+            c7_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c8_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c9_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c10_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c11_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c12_r1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c7_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c8_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c9_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c10_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c11_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c12_r2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c7_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c8_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c9_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c10_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c11_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            c12_r3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            rt_1: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            rt_2: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
+            },
+            rt_3: KeyActionSet {
+                base_action: KeyAction::HidKey(KeyboardUsage::KeyboardAa),
+                layer_one_action: KeyAction::HidKey(KeyboardUsage::KeyboardBb),
+                layer_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardCc),
+                layer_one_and_two_action: KeyAction::HidKey(KeyboardUsage::KeyboardDd),
             },
         };
     }

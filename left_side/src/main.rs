@@ -10,23 +10,26 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
-use embassy_rp::bind_interrupts;
-use embassy_rp::peripherals::USB;
+use embassy_rp::peripherals::{I2C0, USB};
 use embassy_rp::usb::{Driver, InterruptHandler};
+use embassy_rp::{bind_interrupts, i2c_slave};
+use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
+use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
 use embassy_usb::class::hid::{HidReaderWriter, ReportId, RequestHandler, State};
 use embassy_usb::control::OutResponse;
 use embassy_usb::{Builder, Config, Handler};
-use fixed::types::extra::{U8, U80};
 use hid_helper::keyboard_report::KeyboardReportHelper;
 use io_management::left_half_manager::{LeftIoManager, LeftReadout};
+use io_management::right_half_manager::RightReadout;
 use profiles_management::profiles::profile_1::profile_1::get_profile;
-use report_buffer::buffer::KeyboardRingBuffer;
+use report_buffer::buffer::{self, KeyboardRingBuffer};
 use usbd_hid::descriptor::{KeyboardReport, KeyboardUsage, SerializedDescriptor};
 use {defmt_rtt as _, panic_probe as _};
 
 bind_interrupts!(struct Irqs {
     USBCTRL_IRQ => InterruptHandler<USB>;
+    I2C0_IRQ => embassy_rp::i2c::InterruptHandler<I2C0>;
 });
 
 #[embassy_executor::main]
@@ -86,21 +89,36 @@ async fn main(_spawner: Spawner) {
     let (reader, mut writer) = hid.split();
 
     // ----------------------------------------------------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------------------------------------------------------------------------
     // ------Setting up IO---------------------------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------------------------------
     // rows
 
-    let mut buffer = KeyboardRingBuffer::new();
+    let mut buffer_mutex: Mutex<ThreadModeRawMutex, KeyboardRingBuffer> =
+        Mutex::new(KeyboardRingBuffer::new());
     let mut left_io_manager = LeftIoManager::new(
         p.PIN_0, p.PIN_1, p.PIN_2, p.PIN_8, p.PIN_7, p.PIN_6, p.PIN_5, p.PIN_4, p.PIN_3, p.PIN_11,
         p.PIN_12, p.PIN_13,
     );
 
+    const LEFT_KEYBOARD_ADDRESS: u16 = 0x0069;
+
+    let left_sda = p.PIN_16;
+    let left_scl = p.PIN_17;
+    let mut config = i2c_slave::Config::default();
+    config.addr = LEFT_KEYBOARD_ADDRESS;
+
+    let mut device = i2c_slave::I2cSlave::new(p.I2C0, left_scl, left_sda, Irqs, config);
+
     let profile = get_profile();
+
+    let i2c_fut = async {
+        let mut i2c_buffer: [u8; 4] = [0, 0, 0, 0];
+        loop {
+            device.listen(&mut i2c_buffer).await;
+            let readout =
+                RightReadout::new(i2c_buffer[3], i2c_buffer[2], i2c_buffer[1], i2c_buffer[0]);
+        }
+    };
 
     let in_fut = async {
         let mut previous_readout = LeftReadout::default();
@@ -110,18 +128,11 @@ async fn main(_spawner: Spawner) {
             if readout != previous_readout {
                 // processing the readout
                 previous_readout = readout;
-                profile.process_readout(&previous_readout, &mut buffer);
-                // } else {
-                //     buffer.put_report(KeyboardReportHelper::from_values(
-                //         0,
-                //         KeyboardUsage::KeyboardAa as u8,
-                //         0,
-                //         0,
-                //         0,
-                //         0,
-                //         0,
-                //     /*  x/));
+                let right_readout = RightReadout::default();
+                let mut buffer = buffer_mutex.lock().await;
+                profile.process_readout(&previous_readout, &right_readout, &mut buffer);
             }
+            let mut buffer = buffer_mutex.lock().await;
             match buffer.get_report_helper() {
                 Some(report_helper) => {
                     let report = report_helper.get_report();
@@ -138,9 +149,10 @@ async fn main(_spawner: Spawner) {
         reader.run(false, &mut request_handler).await;
     };
 
+    let input_fut = join(in_fut, i2c_fut);
     // Run everything concurrently.
     // If we had made everything `'static` above instead, we could do this using separate tasks instead.
-    join(usb_fut, join(in_fut, out_fut)).await;
+    join(usb_fut, join(input_fut, out_fut)).await;
 }
 
 struct MyRequestHandler {}

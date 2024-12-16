@@ -1,156 +1,306 @@
 pub mod keyboard_profile {
+
     use crate::{
         hid_helper::keyboard_report::KeyboardReportHelper,
-        io_management::left_half_manager::{LeftKeyLocation, LeftReadout},
+        io_management::{
+            left_half_manager::{LeftKeyLocation, LeftReadout},
+            right_half_manager::{RightKeyLocation, RightReadout},
+        },
         report_buffer::buffer::KeyboardRingBuffer,
     };
     use heapless::Vec;
     use usbd_hid::descriptor::KeyboardUsage;
 
     pub struct KeyboardProfile {
-        pub layer_key_1: LeftKeyLocation,
-        pub layer_key_2: LeftKeyLocation,
+        pub layer_key_1: UniversalKey,
+        pub layer_key_2: UniversalKey,
         pub c1_r1: KeyActionSet,
         pub c2_r1: KeyActionSet,
         pub c3_r1: KeyActionSet,
         pub c4_r1: KeyActionSet,
         pub c5_r1: KeyActionSet,
         pub c6_r1: KeyActionSet,
+        pub c7_r1: KeyActionSet,
+        pub c8_r1: KeyActionSet,
+        pub c9_r1: KeyActionSet,
+        pub c10_r1: KeyActionSet,
+        pub c11_r1: KeyActionSet,
+        pub c12_r1: KeyActionSet,
         pub c1_r2: KeyActionSet,
         pub c2_r2: KeyActionSet,
         pub c3_r2: KeyActionSet,
         pub c4_r2: KeyActionSet,
         pub c5_r2: KeyActionSet,
         pub c6_r2: KeyActionSet,
+        pub c7_r2: KeyActionSet,
+        pub c8_r2: KeyActionSet,
+        pub c9_r2: KeyActionSet,
+        pub c10_r2: KeyActionSet,
+        pub c11_r2: KeyActionSet,
+        pub c12_r2: KeyActionSet,
         pub c1_r3: KeyActionSet,
         pub c2_r3: KeyActionSet,
         pub c3_r3: KeyActionSet,
         pub c4_r3: KeyActionSet,
         pub c5_r3: KeyActionSet,
         pub c6_r3: KeyActionSet,
+        pub c7_r3: KeyActionSet,
+        pub c8_r3: KeyActionSet,
+        pub c9_r3: KeyActionSet,
+        pub c10_r3: KeyActionSet,
+        pub c11_r3: KeyActionSet,
+        pub c12_r3: KeyActionSet,
         pub lt_1: KeyActionSet,
         pub lt_2: KeyActionSet,
         pub lt_3: KeyActionSet,
+        pub rt_1: KeyActionSet,
+        pub rt_2: KeyActionSet,
+        pub rt_3: KeyActionSet,
     }
 
     impl KeyboardProfile {
         pub fn process_readout(
             &self,
-            location_helper: &LeftReadout,
+            left_readout: &LeftReadout,
+            right_readout: &RightReadout,
             buffer: &mut KeyboardRingBuffer,
         ) {
-            let layer_one = location_helper.is_pressed(&self.layer_key_1);
-            let layer_two = location_helper.is_pressed(&self.layer_key_2);
+            let layer_one = match &self.layer_key_1 {
+                UniversalKey::RightKey(right_key_location) => {
+                    right_readout.is_pressed(&right_key_location)
+                }
+                UniversalKey::LeftKey(left_key_location) => {
+                    left_readout.is_pressed(&left_key_location)
+                }
+            };
+            let layer_two = match &self.layer_key_2 {
+                UniversalKey::RightKey(right_key_location) => {
+                    right_readout.is_pressed(&right_key_location)
+                }
+                UniversalKey::LeftKey(left_key_location) => {
+                    left_readout.is_pressed(&left_key_location)
+                }
+            };
             let layer = LayerLevel::new(layer_one, layer_two);
             let mut report = KeyboardReportHelper::new();
 
-            if location_helper.is_pressed(&LeftKeyLocation::C1R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C1R1) {
                 if self.c1_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C1R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C1R2) {
                 if self.c1_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C1R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C1R3) {
                 if self.c1_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C2R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C2R1) {
                 if self.c2_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C2R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C2R2) {
                 if self.c2_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C2R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C2R3) {
                 if self.c2_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C3R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C3R1) {
                 if self.c3_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C3R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C3R2) {
                 if self.c3_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C3R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C3R3) {
                 if self.c3_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C4R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C4R1) {
                 if self.c4_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C4R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C4R2) {
                 if self.c4_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C4R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C4R3) {
                 if self.c4_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C5R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C5R1) {
                 if self.c5_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C5R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C5R2) {
                 if self.c5_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C5R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C5R3) {
                 if self.c5_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C6R1) {
+            if left_readout.is_pressed(&LeftKeyLocation::C6R1) {
                 if self.c6_r1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C6R2) {
+            if left_readout.is_pressed(&LeftKeyLocation::C6R2) {
                 if self.c6_r2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::C6R3) {
+            if left_readout.is_pressed(&LeftKeyLocation::C6R3) {
                 if self.c6_r3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::LT1) {
+            if left_readout.is_pressed(&LeftKeyLocation::LT1) {
                 if self.lt_1.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::LT2) {
+            if left_readout.is_pressed(&LeftKeyLocation::LT2) {
                 if self.lt_2.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
-            if location_helper.is_pressed(&LeftKeyLocation::LT3) {
+            if left_readout.is_pressed(&LeftKeyLocation::LT3) {
                 if self.lt_3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C7R1) {
+                if self.c7_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C7R2) {
+                if self.c7_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C7R3) {
+                if self.c7_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C8R1) {
+                if self.c8_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C8R2) {
+                if self.c8_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C8R3) {
+                if self.c8_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C9R1) {
+                if self.c9_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C9R2) {
+                if self.c9_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C9R3) {
+                if self.c9_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C10R1) {
+                if self.c10_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C10R2) {
+                if self.c10_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C10R3) {
+                if self.c10_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C11R1) {
+                if self.c11_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C11R2) {
+                if self.c11_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C11R3) {
+                if self.c11_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C12R1) {
+                if self.c12_r1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C12R2) {
+                if self.c12_r2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::C12R3) {
+                if self.c12_r3.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::RT1) {
+                if self.rt_1.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::RT2) {
+                if self.rt_2.process_key(&layer, buffer, &mut report) {
+                    return;
+                }
+            }
+            if right_readout.is_pressed(&RightKeyLocation::RT3) {
+                if self.rt_3.process_key(&layer, buffer, &mut report) {
                     return;
                 }
             }
             buffer.put_report(report);
         }
+    }
+
+    pub enum UniversalKey {
+        RightKey(RightKeyLocation),
+        LeftKey(LeftKeyLocation),
     }
 
     pub struct KeyActionSet {
