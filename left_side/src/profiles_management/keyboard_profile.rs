@@ -355,11 +355,12 @@ pub mod keyboard_profile {
         DeadKey,
         HidKey(KeyboardUsage),
         HidReport(Vec<KeyboardReportHelper, 30>),
+        BoardAction,
     }
 
     impl KeyAction {
         /// Returns true if the popultion process is complete and the hid report is added to the buffer
-        /// (no need to check for any more keys). Returns false otherwise
+        /// (no need to check for any more keys). Returns false otherwise.
         pub fn add_to_buffer(
             &self,
             buffer: &mut KeyboardRingBuffer,
@@ -382,6 +383,8 @@ pub mod keyboard_profile {
                     }
                     return true;
                 }
+                // TODO: handle the various key actions needed to be performed
+                KeyAction::BoardAction => true,
             }
         }
     }
