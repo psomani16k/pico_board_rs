@@ -1,3 +1,6 @@
 [submodule "embassy"]
 	path = embassy
 	url = https://github.com/embassy-rs/embassy.git
+[submodule "left_side/trouble"]
+	path = left_side/trouble
+	url = https://github.com/embassy-rs/trouble

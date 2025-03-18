@@ -1,10 +1,12 @@
 #![no_std]
 #![no_main]
 
+mod ble_hid;
 mod hid_helper;
 mod io_management;
 mod profiles_management;
 mod report_buffer;
+mod usb_hid;
 
 use core::sync::atomic::{AtomicBool, Ordering};
 use defmt::*;
@@ -19,7 +21,6 @@ use embassy_time::Timer;
 use embassy_usb::class::hid::{HidReaderWriter, ReportId, RequestHandler, State};
 use embassy_usb::control::OutResponse;
 use embassy_usb::{Builder, Config, Handler};
-use hid_helper::keyboard_report::KeyboardReportHelper;
 use io_management::full_keyboard_manager::FullKeyboardManager;
 use io_management::left_half_manager::{LeftIoManager, LeftReadout};
 use io_management::right_half_manager::RightReadout;
@@ -33,11 +34,17 @@ bind_interrupts!(struct Irqs {
     I2C0_IRQ => embassy_rp::i2c::InterruptHandler<I2C0>;
 });
 
+// #[embassy_executor::main]
+// async fn main(_spawner: Spawner){
+//     let p = embassy_rp::init(Default::default());
+//
+// }
+
 #[embassy_executor::main]
-async fn main(_spawner: Spawner) {
-    // ----------------------------------------------------------------------------------------------------------------------------------------
-    // ---------------------- INITIALIZING ----------------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------------------------------
+async fn oldmain(_spawner: Spawner) {
+    // ----------------------------------------------------------------------
+    // ---------------------- INITIALIZING ----------------------------------
+    // ----------------------------------------------------------------------
     let p = embassy_rp::init(Default::default());
     // Create the driver, from the HAL.
     let driver = Driver::new(p.USB, Irqs);
@@ -89,9 +96,9 @@ async fn main(_spawner: Spawner) {
     let usb_fut = usb.run();
     let (reader, mut writer) = hid.split();
 
-    // ----------------------------------------------------------------------------------------------------------------------------------------
-    // ------Setting up IO---------------------------------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // ------Setting up IO---------------------------------------------------
+    // ----------------------------------------------------------------------
     // rows
 
     // let mut buffer_mutex: Mutex<ThreadModeRawMutex, KeyboardRingBuffer> =
