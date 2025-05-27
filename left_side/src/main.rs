@@ -12,10 +12,9 @@ use core::sync::atomic::{AtomicBool, Ordering};
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
-use embassy_rp::gpio::{Input, Pin};
-use embassy_rp::peripherals::{self, I2C0, USB};
+use embassy_rp::peripherals::{I2C0, USB};
 use embassy_rp::usb::{Driver, InterruptHandler};
-use embassy_rp::{bind_interrupts, i2c_slave, Peripheral};
+use embassy_rp::{bind_interrupts, i2c_slave};
 use embassy_sync::blocking_mutex::raw::ThreadModeRawMutex;
 use embassy_sync::mutex::Mutex;
 use embassy_time::Timer;
@@ -27,7 +26,6 @@ use io_management::left_half_manager::{LeftIoManager, LeftReadout};
 use io_management::right_half_manager::RightReadout;
 use profiles_management::profiles::profile_1::profile_1::get_profile;
 use report_buffer::buffer::KeyboardRingBuffer;
-use usb_hid::usb_main::UsbKeyboard;
 use usbd_hid::descriptor::{KeyboardReport, SerializedDescriptor};
 use {defmt_rtt as _, panic_probe as _};
 
@@ -36,28 +34,28 @@ bind_interrupts!(struct Irqs {
     I2C0_IRQ => embassy_rp::i2c::InterruptHandler<I2C0>;
 });
 
-#[embassy_executor::main]
-async fn main(_spawner: Spawner) {
-    let peripherals = embassy_rp::init(Default::default());
-    let usb;
-
-    // doing this is safe as PIN_15 will (note to self: SHOULD NOT!!) not be
-    // used later.
-    unsafe {
-        let comm_mode = peripherals.PIN_15.clone_unchecked();
-        let comm_mode = Input::new(comm_mode, embassy_rp::gpio::Pull::Down);
-        usb = comm_mode.is_low();
-    }
-
-    if usb {
-        // Keyboard Over USB
-        let usb_keyboard = UsbKeyboard::new(peripherals);
-    } else {
-        // Keyboard Over BLE
-    }
-}
-
 // #[embassy_executor::main]
+// async fn main(_spawner: Spawner) {
+//     let peripherals = embassy_rp::init(Default::default());
+//     let usb;
+//
+//     // doing this is safe as PIN_15 will (note to self: SHOULD NOT!!) not be
+//     // used later.
+//     unsafe {
+//         let comm_mode = peripherals.PIN_15.clone_unchecked();
+//         let comm_mode = Input::new(comm_mode, embassy_rp::gpio::Pull::Down);
+//         usb = comm_mode.is_low();
+//     }
+//
+//     if usb {
+//         // Keyboard Over USB
+//         let usb_keyboard = UsbKeyboard::new(peripherals);
+//     } else {
+//         // Keyboard Over BLE
+//     }
+// }
+//
+#[embassy_executor::main]
 async fn oldmain(_spawner: Spawner) {
     // ----------------------------------------------------------------------
     // ---------------------- INITIALIZING ----------------------------------
